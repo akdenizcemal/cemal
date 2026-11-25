@@ -31,6 +31,15 @@ const errorEl = document.getElementById("error");
  */
 async function fetchMedicines() {
     // TODO: fetch(`${BASE_URL}/medicines`), check response.ok, return the data.
+    const response = await fetch(BASE_URL + "/medicines");
+    if(!response.ok){
+    throw new Error("Cannot perform this right now");
+    }
+    const data = await response.json();
+
+    return data.medicines;
+
+
 }
 
 /**
@@ -43,6 +52,36 @@ function renderMedicines(data) {
     // TODO: build a table (the .results styles expect a <table>), iterate the
     // records, and render each row safely. Use the .invalid class to flag bad
     // values if you like.
+    errorEl.textContent="";
+    errorEl.hidden=true;
+
+    resultsEl.innerHTML = "";
+    const table = document.createElement("table");
+    for( const medicine of data){
+    const row = document.createElement("tr");
+
+    if(medicine.name === null || medicine.name.trim() === "" || medicine.name === undefined);
+    const cell = document.createElement("td");
+    cell.textContent = "Unknown";
+    row.appendChild(cell);
+    }
+    else{
+    const cell = document.createElement("td");
+    cell.textContent = medicine.name;
+    row.appendChild(cell);
+    }
+    if(medicine.price === null || medicine.price === undefined || isNaN(medicine.price)){
+    const cell = document.createElement("td");
+    cell.textContent = "Unknown";
+    row.appendChild(cell);
+    }
+    else{
+    const cell = document.createElement("td");
+    cell.textContent = medicine.price;
+    row.appendChild(cell);
+    }
+    table.appendChild(row);
+
 }
 
 /**
@@ -53,14 +92,57 @@ function renderMedicines(data) {
  */
 async function fetchUnreliable() {
     // TODO: implement the retry loop here.
+    loadingEl.hidden=false;
+    for(let i =0 ; i <3; i++){
+      try{
+         const response = await fetch(BASE_URL + "/medicines/unreliable");
+         if(!response.ok){
+             throw new Error("Cannot perform this right now");
+             }
+            const data = await response.json();
+            renderMedicines(data);
+            return;
+         }
+         catch(error){
+            if(i === 2){
+                errorEl.textContent= "Maximum number of tries reached"
+                errorEl.hidden=false;
+            }
+            else{
+               await new Promise (resolve => (resolve,1000));
+            }
+
+
+         }
+
+    }
+    loadingEl.hidden=true;
 }
 
 // ---- Button wiring (already works - no need to change) ----
 document.getElementById("load-medicines").addEventListener("click", async () => {
     // TODO: call fetchMedicines() then renderMedicines(data),
     // showing #loading and clearing #error appropriately.
+    const data = fetchMedicines();
+
+    try{
+    renderMedicines(data);
+    if(!response.ok){
+    throw new Error("Cannot perform this right now");
+    }
+    const data = await response.json();
+    renderMedicines(data);
+         return;
+    }
+    catch{
+     errorEl.textContent= "Maximum number of tries reached"
+         errorEl.hidden=false;
+    }
+
+
 });
 
 document.getElementById("load-unreliable").addEventListener("click", async () => {
     // TODO: call fetchUnreliable().
+    await fetchUnreliable();
 });
