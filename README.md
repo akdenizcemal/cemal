@@ -53,3 +53,4 @@ Check `http://localhost:8000/medicines` in your browser to see the raw data.
 After the 40 minutes you will walk an interviewer through your code and your
 thinking: what you did, what you'd improve, and how you'd handle larger or
 messier data. Be ready to explain your choices.
+# cemal
